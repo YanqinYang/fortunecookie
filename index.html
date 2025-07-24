@@ -134,6 +134,11 @@
             const shareButtons = document.getElementById('shareButtons');
             const crackSound = document.getElementById('crackSound');
 
+            crackSound.currentTime = 0; // 重置播放进度
+            crackSound.play().catch(e => {
+            alert("请先点击页面任意位置允许音效！错误: " + e);
+
+
             // 防止重复点击
             if (cookie.classList.contains('cracked')) return;
 
