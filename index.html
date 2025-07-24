@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortune Cookie</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #FFE8D6;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            position: relative;
+        }
+        .cookie {
+            width: 200px;
+            height: 200px;
+            background: #E67E22;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            font-size: 80px;
+            user-select: none;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .cookie:hover {
+            transform: scale(1.05);
+        }
+        .cookie.cracked {
+            background: linear-gradient(45deg, #E67E22 50%, #D35400 50%);
+        }
+        .cookie.cracked::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50" stroke="black" fill="none" stroke-width="2"/></svg>') no-repeat center;
+        }
+        .fortune {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            display: none;
+            font-style: italic;
+        }
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px) rotate(-5deg); }
+            40% { transform: translateX(10px) rotate(5deg); }
+            60% { transform: translateX(-10px) rotate(-5deg); }
+            80% { transform: translateX(10px) rotate(5deg); }
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #2ECC71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: none;
+        }
+        button:hover {
+            background: #27AE60;
+        }
+        .share-buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .share-buttons a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .wechat {
+            background: #09BB07;
+        }
+        .facebook {
+            background: #3B5998;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cookie" onclick="crackCookie()">🍪</div>
+        <div id="fortune" class="fortune"></div>
+        <button id="crackAgain" onclick="resetCookie()">Crack Again</button>
+        <div class="share-buttons" id="shareButtons">
+            <a href="#" class="wechat" onclick="shareToWeChat()">WeChat</a>
+            <a href="#" class="facebook" onclick="shareToFacebook()">Facebook</a>
+        </div>
+    </div>
+
+    <audio id="crackSound" src="https://assets.mixkit.co/sfx/preview/mixkit-breaking-plastic-407.mp3" preload="auto"></audio>
+
+    <script>
+        const fortunes = [
+            "A beautiful, smart, and loving person will be coming into your life.",
+            "Your creativity will make you famous.",
+            "Do not let your limitations overshadow your talents.",
+            "The greatest risk is not taking one.",
+            "Good things come to those who wait.",
+            "You will receive a pleasant surprise soon.",
+            "Your kindness will lead you to success.",
+            "The fortune you seek is in another cookie."
+        ];
+
+        function crackCookie() {
+            const cookie = document.querySelector('.cookie');
+            const fortune = document.getElementById('fortune');
+            const crackAgainBtn = document.getElementById('crackAgain');
+            const shareButtons = document.getElementById('shareButtons');
+            const crackSound = document.getElementById('crackSound');
+
+            // 防止重复点击
+            if (cookie.classList.contains('cracked')) return;
+
+            // 播放音效
+            crackSound.currentTime = 0;
+            crackSound.play();
+
+            // 添加晃动动画
+            cookie.classList.add('shake');
+            
+            // 动画结束后执行
+            setTimeout(() => {
+                cookie.classList.remove('shake');
+                cookie.classList.add('cracked');
+                
+                // 显示幸运语
+                const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                fortune.textContent = randomFortune;
+                fortune.style.display = 'block';
+                
+                // 显示按钮
+                crackAgainBtn.style.display = 'inline-block';
+                shareButtons.style.display = 'block';
+            }, 500);
+        }
+
+        function resetCookie() {
+            const cookie = document.querySelector('.cookie');
+            const fortune = document.getElementById('fortune');
+            const crackAgainBtn = document.getElementById('crackAgain');
+            const shareButtons = document.getElementById('shareButtons');
+
+            cookie.classList.remove('cracked');
+            fortune.style.display = 'none';
+            crackAgainBtn.style.display = 'none';
+            shareButtons.style.display = 'none';
+        }
+
+        function shareToWeChat() {
+            const fortune = document.getElementById('fortune').textContent;
+            alert(`Share to WeChat: ${fortune}\n(实际应用中这里会调用微信JS-SDK)`);
+        }
+
+        function shareToFacebook() {
+            const fortune = document.getElementById('fortune').textContent;
+            window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(fortune)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
