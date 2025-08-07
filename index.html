@@ -66,45 +66,61 @@
     
     <div id="fortune" class="fortune"></div>
     
-    <audio id="crackSound" src="ccrack.mp3" preload="auto"></audio>
+    <!-- 临时移除音频测试 -->
+    <!-- <audio id="crackSound" src="ccrack.mp3" preload="auto"></audio> -->
 
     <script>
-        // 确保DOM完全加载
-        document.addEventListener('DOMContentLoaded', function() {
-            const fortunes = [
-                "A dream you have will come true.",
-                "Good fortune will find you soon.",
-                "Adventure awaits around the corner.",
-                "Your creativity will lead to success.",
-                "Happiness begins with a smile."
-            ];
+        // 调试标记
+        console.log("初始化开始...");
+        
+        // 立即绑定事件（不使用DOMContentLoaded）
+        const wholeCookie = document.getElementById('wholeCookie');
+        const crackedCookie = document.getElementById('crackedCookie');
+        const fortune = document.getElementById('fortune');
+        // const sound = document.getElementById('crackSound');
+        
+        const fortunes = [
+            "DEBUG: 点击事件已触发",
+            "DEBUG: 脚本正在工作",
+            "DEBUG: 动画应该可见",
+            "DEBUG: 运势文本加载成功",
+            "DEBUG: 恭喜！功能正常"
+        ];
+        
+        function crackCookie() {
+            console.log("函数被调用");
             
-            const wholeCookie = document.getElementById('wholeCookie');
-            const crackedCookie = document.getElementById('crackedCookie');
-            const fortune = document.getElementById('fortune');
-            const sound = document.getElementById('crackSound');
-            
-            // 定义点击函数
-            function crackCookie() {
-                if (wholeCookie.style.opacity === '0') return;
-                
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Audio error:", e));
-                
-                wholeCookie.classList.add('shake');
-                
-                setTimeout(() => {
-                    wholeCookie.style.opacity = '0';
-                    crackedCookie.style.opacity = '1';
-                    fortune.style.display = 'block';
-                    fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
-                    wholeCookie.classList.remove('shake');
-                }, 500);
+            if (wholeCookie.style.opacity === '0') {
+                console.warn("重复点击被阻止");
+                return;
             }
             
-            // 绑定事件（重要修改！）
-            wholeCookie.addEventListener('click', crackCookie);
-        });
+            // 调试时先注释音频
+            // sound.currentTime = 0;
+            // sound.play().catch(e => console.log("音频错误:", e));
+            
+            wholeCookie.classList.add('shake');
+            console.log("添加shake类");
+            
+            setTimeout(() => {
+                wholeCookie.style.opacity = '0';
+                crackedCookie.style.opacity = '1';
+                fortune.style.display = 'block';
+                fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
+                wholeCookie.classList.remove('shake');
+                
+                console.log("动画完成", {
+                    wholeCookieOpacity: wholeCookie.style.opacity,
+                    crackedCookieOpacity: crackedCookie.style.opacity
+                });
+            }, 500);
+        }
+        
+        // 两种事件绑定方式确保至少一种生效
+        wholeCookie.onclick = crackCookie;
+        wholeCookie.addEventListener('click', crackCookie);
+        
+        console.log("初始化完成，等待点击...");
     </script>
 </body>
 </html>
