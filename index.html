@@ -19,36 +19,28 @@
             text-align: center;
         }
 
-        /* 幸运饼干造型 */
-        .cookie {
+        /* 幸运饼干容器 */
+        .cookie-container {
+            position: relative;
             width: 220px;
             height: 120px;
-            background: #FFA500; /* 橙色基调 */
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            position: relative;
+            margin: 20px 0;
+        }
+
+        /* 幸运饼干图片 */
+        .cookie {
+            width: 100%;
+            height: 100%;
             cursor: pointer;
-            box-shadow: 
-                0 10px 25px rgba(0, 0, 0, 0.2),
-                inset -10px -10px 30px rgba(0, 0, 0, 0.1),
-                inset 5px 5px 10px rgba(255, 255, 255, 0.3);
             transition: transform 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 60px;
-            user-select: none;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         /* 饼干裂纹效果 */
         .cookie.cracked {
-            background: linear-gradient(45deg, #FFA500 50%, #E69500 50%);
-        }
-        .cookie.cracked::before {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,50 Q50,20 80,50" stroke="black" fill="none" stroke-width="2" stroke-opacity="0.3"/></svg>') no-repeat center;
+            opacity: 0;
         }
 
         /* 晃动动画 */
@@ -118,7 +110,12 @@
 <body>
     <h1>Fortune Cookie</h1>
     <div class="container">
-        <div class="cookie" onclick="crackCookie()">🍪</div>
+        <div class="cookie-container">
+            <!-- 完整的饼干图片 -->
+            <img src="https://i.imgur.com/JQ9qy0W.png" class="cookie" id="wholeCookie" onclick="crackCookie()" alt="Fortune Cookie">
+            <!-- 裂开的饼干图片 -->
+            <img src="https://i.imgur.com/VmK7JqQ.png" class="cookie" id="crackedCookie" alt="Cracked Fortune Cookie" style="opacity: 0;">
+        </div>
         <div id="fortune" class="fortune"></div>
         <button id="crackAgain" onclick="resetCookie()">Crack Again</button>
         <div class="share-buttons" id="shareButtons">
@@ -139,23 +136,25 @@
         ];
 
         function crackCookie() {
-            const cookie = document.querySelector('.cookie');
+            const wholeCookie = document.getElementById('wholeCookie');
+            const crackedCookie = document.getElementById('crackedCookie');
             const fortune = document.getElementById('fortune');
             const crackAgainBtn = document.getElementById('crackAgain');
             const shareButtons = document.getElementById('shareButtons');
             const crackSound = document.getElementById('crackSound');
 
-            if (cookie.classList.contains('cracked')) return;
+            if (wholeCookie.style.opacity === '0') return;
 
             // 播放音效
             crackSound.currentTime = 0;
             crackSound.play().catch(e => console.log("请点击页面允许音效"));
 
             // 动画
-            cookie.classList.add('shake');
+            wholeCookie.classList.add('shake');
             setTimeout(() => {
-                cookie.classList.remove('shake');
-                cookie.classList.add('cracked');
+                wholeCookie.classList.remove('shake');
+                wholeCookie.style.opacity = '0';
+                crackedCookie.style.opacity = '1';
                 
                 // 显示随机幸运语
                 fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
@@ -168,12 +167,14 @@
         }
 
         function resetCookie() {
-            const cookie = document.querySelector('.cookie');
+            const wholeCookie = document.getElementById('wholeCookie');
+            const crackedCookie = document.getElementById('crackedCookie');
             const fortune = document.getElementById('fortune');
             const crackAgainBtn = document.getElementById('crackAgain');
             const shareButtons = document.getElementById('shareButtons');
 
-            cookie.classList.remove('cracked');
+            wholeCookie.style.opacity = '1';
+            crackedCookie.style.opacity = '0';
             fortune.style.display = 'none';
             crackAgainBtn.style.display = 'none';
             shareButtons.style.display = 'none';
