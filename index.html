@@ -16,14 +16,12 @@
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
         }
-        
         .cookie-container {
             position: relative;
             width: 300px;
             height: 200px;
             margin: 20px 0;
         }
-        
         .cookie-img {
             width: 100%;
             height: 100%;
@@ -34,15 +32,12 @@
             left: 0;
             transition: opacity 0.5s;
         }
-        
         #crackedCookie {
             opacity: 0;
         }
-        
         .shake {
             animation: shake 0.5s;
         }
-        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20% { transform: translateX(-10px) rotate(-5deg); }
@@ -50,7 +45,6 @@
             60% { transform: translateX(-10px) rotate(-5deg); }
             80% { transform: translateX(10px) rotate(5deg); }
         }
-        
         .fortune {
             background: white;
             color: #333;
@@ -66,56 +60,51 @@
     <h1>Fortune Cookie</h1>
     
     <div class="cookie-container">
-        <!-- 关键修改：直接使用相对路径 -->
-        <img src="FC.png" id="wholeCookie" class="cookie-img">
-        <img src="CFC.png" id="crackedCookie" class="cookie-img">
+        <img src="FC.png" id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
+        <img src="CFC.png" id="crackedCookie" class="cookie-img" alt="Cracked Cookie" style="opacity:0">
     </div>
     
     <div id="fortune" class="fortune"></div>
     
     <audio id="crackSound" src="ccrack.mp3" preload="auto"></audio>
-    
+
     <script>
-        const fortunes = [
-            "A dream you have will come true.",
-            "Good fortune will find you soon.",
-            "Adventure awaits around the corner.",
-            "Your creativity will lead to success.",
-            "Happiness begins with a smile."
-        ];
-        
-        function crackCookie() {
+        // 确保DOM完全加载
+        document.addEventListener('DOMContentLoaded', function() {
+            const fortunes = [
+                "A dream you have will come true.",
+                "Good fortune will find you soon.",
+                "Adventure awaits around the corner.",
+                "Your creativity will lead to success.",
+                "Happiness begins with a smile."
+            ];
+            
             const wholeCookie = document.getElementById('wholeCookie');
             const crackedCookie = document.getElementById('crackedCookie');
             const fortune = document.getElementById('fortune');
             const sound = document.getElementById('crackSound');
             
-            // 防止重复点击
-            if (wholeCookie.style.opacity === '0') return;
-            
-            // 播放音效
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log("Audio play failed:", e));
-            
-            // 添加晃动动画
-            wholeCookie.classList.add('shake');
-            
-            setTimeout(() => {
-                // 切换图片
-                wholeCookie.style.opacity = '0';
-                crackedCookie.style.opacity = '1';
+            // 定义点击函数
+            function crackCookie() {
+                if (wholeCookie.style.opacity === '0') return;
                 
-                // 显示运势
-                fortune.style.display = 'block';
-                fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Audio error:", e));
                 
-                // 移除动画
-                wholeCookie.classList.remove('shake');
-            }, 500);
-        }
-        
-        // 绑定点击事件
-        document.getElementById('wholeCookie').addEventListener('click', crackCookie);
+                wholeCookie.classList.add('shake');
+                
+                setTimeout(() => {
+                    wholeCookie.style.opacity = '0';
+                    crackedCookie.style.opacity = '1';
+                    fortune.style.display = 'block';
+                    fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
+                    wholeCookie.classList.remove('shake');
+                }, 500);
+            }
+            
+            // 绑定事件（重要修改！）
+            wholeCookie.addEventListener('click', crackCookie);
+        });
     </script>
 </body>
 </html>
