@@ -5,48 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fortune Cookie</title>
     <style>
-        /* 紫色渐变背景 */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
-            text-align: center;
         }
-
-        /* 幸运饼干容器 */
+        
         .cookie-container {
             position: relative;
-            width: 220px;
-            height: 120px;
+            width: 300px;
+            height: 200px;
             margin: 20px 0;
         }
-
-        /* 幸运饼干图片 */
-        .cookie {
+        
+        .cookie-img {
             width: 100%;
             height: 100%;
+            object-fit: contain;
             cursor: pointer;
-            transition: transform 0.3s;
             position: absolute;
             top: 0;
             left: 0;
+            transition: opacity 0.5s;
         }
-
-        /* 饼干裂纹效果 */
-        .cookie.cracked {
+        
+        #crackedCookie {
             opacity: 0;
         }
-
-        /* 晃动动画 */
+        
         .shake {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            animation: shake 0.5s;
         }
+        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20% { transform: translateX(-10px) rotate(-5deg); }
@@ -54,141 +50,72 @@
             60% { transform: translateX(-10px) rotate(-5deg); }
             80% { transform: translateX(10px) rotate(5deg); }
         }
-
-        /* 幸运语卡片 */
+        
         .fortune {
-            margin: 30px auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            background: white;
             color: #333;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            max-width: 300px;
-            display: none;
-            font-style: italic;
-            font-size: 18px;
-        }
-
-        /* 按钮样式 */
-        button {
+            padding: 15px;
+            border-radius: 8px;
             margin-top: 20px;
-            padding: 12px 25px;
-            background: #FF6B6B;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
+            max-width: 80%;
             display: none;
         }
-        button:hover {
-            background: #FF5252;
-            transform: translateY(-2px);
-        }
-
-        /* 分享按钮 */
-        .share-buttons {
-            margin-top: 25px;
-            display: none;
-        }
-        .share-buttons a {
-            margin: 0 10px;
-            padding: 10px 20px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .wechat { background: #09BB07; }
-        .facebook { background: #3B5998; }
     </style>
 </head>
 <body>
     <h1>Fortune Cookie</h1>
-    <div class="container">
-        <div class="cookie-container">
-            <!-- 完整的饼干图片 -->
-            <img src="FC.png" class="cookie" id="wholeCookie" onclick="crackCookie()" alt="Fortune Cookie">
-            <!-- 裂开的饼干图片 -->
-            <img src="CFC.png" class="cookie" id="crackedCookie" alt="Cracked Fortune Cookie" style="opacity: 0;">
-        </div>
-        <div id="fortune" class="fortune"></div>
-        <button id="crackAgain" onclick="resetCookie()">Crack Again</button>
-        <div class="share-buttons" id="shareButtons">
-            <a href="#" class="wechat" onclick="shareToWeChat()">WeChat</a>
-            <a href="#" class="facebook" onclick="shareToFacebook()">Facebook</a>
-        </div>
+    
+    <div class="cookie-container">
+        <!-- 关键修改：直接使用相对路径 -->
+        <img src="FC.png" id="wholeCookie" class="cookie-img">
+        <img src="CFC.png" id="crackedCookie" class="cookie-img">
     </div>
-
+    
+    <div id="fortune" class="fortune"></div>
+    
     <audio id="crackSound" src="ccrack.mp3" preload="auto"></audio>
-
+    
     <script>
         const fortunes = [
-            "Go with your gut feeling.",
-            "A beautiful, smart, and loving person will be coming into your life.",
-            "Your creativity will make you famous.",
-            "Do not let your limitations overshadow your talents.",
-            "The greatest risk is not taking one."
+            "A dream you have will come true.",
+            "Good fortune will find you soon.",
+            "Adventure awaits around the corner.",
+            "Your creativity will lead to success.",
+            "Happiness begins with a smile."
         ];
-
+        
         function crackCookie() {
             const wholeCookie = document.getElementById('wholeCookie');
             const crackedCookie = document.getElementById('crackedCookie');
             const fortune = document.getElementById('fortune');
-            const crackAgainBtn = document.getElementById('crackAgain');
-            const shareButtons = document.getElementById('shareButtons');
-            const crackSound = document.getElementById('crackSound');
-
+            const sound = document.getElementById('crackSound');
+            
+            // 防止重复点击
             if (wholeCookie.style.opacity === '0') return;
-
+            
             // 播放音效
-            crackSound.currentTime = 0;
-            crackSound.play().catch(e => console.log("请点击页面允许音效"));
-
-            // 动画
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Audio play failed:", e));
+            
+            // 添加晃动动画
             wholeCookie.classList.add('shake');
+            
             setTimeout(() => {
-                wholeCookie.classList.remove('shake');
+                // 切换图片
                 wholeCookie.style.opacity = '0';
                 crackedCookie.style.opacity = '1';
                 
-                // 显示随机幸运语
-                fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
+                // 显示运势
                 fortune.style.display = 'block';
+                fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
                 
-                // 显示按钮
-                crackAgainBtn.style.display = 'inline-block';
-                shareButtons.style.display = 'block';
+                // 移除动画
+                wholeCookie.classList.remove('shake');
             }, 500);
         }
-
-        function resetCookie() {
-            const wholeCookie = document.getElementById('wholeCookie');
-            const crackedCookie = document.getElementById('crackedCookie');
-            const fortune = document.getElementById('fortune');
-            const crackAgainBtn = document.getElementById('crackAgain');
-            const shareButtons = document.getElementById('shareButtons');
-
-            wholeCookie.style.opacity = '1';
-            crackedCookie.style.opacity = '0';
-            fortune.style.display = 'none';
-            crackAgainBtn.style.display = 'none';
-            shareButtons.style.display = 'none';
-        }
-
-        function shareToWeChat() {
-            const fortune = document.getElementById('fortune').textContent;
-            alert(`Share to WeChat: ${fortune}\n(实际需接入微信JS-SDK)`);
-        }
-
-        function shareToFacebook() {
-            const fortune = document.getElementById('fortune').textContent;
-            window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(fortune)}`, '_blank');
-        }
+        
+        // 绑定点击事件
+        document.getElementById('wholeCookie').addEventListener('click', crackCookie);
     </script>
 </body>
 </html>
