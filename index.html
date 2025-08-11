@@ -39,20 +39,19 @@
         }
         .fortune-text {
             position: absolute;
-            top: 58%; /* 精调垂直位置 */
+            top: 58%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 50%; /* 精确匹配纸条宽度 */
+            width: 50%;
             color: #2575fc;
-            font-size: 14px; /* 稍小字号 */
+            font-size: 14px;
             font-weight: normal;
             display: none;
-            z-index: 10;
+            z-index: 20; /* 提高层级 */
             line-height: 1.3;
             text-align: center;
             word-wrap: break-word;
             padding: 0 5px;
-            box-sizing: border-box;
         }
         .shake {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
@@ -101,14 +100,12 @@
     <h1>Fortune Cookie</h1>
     
     <div class="cookie-container">
-        <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/CFC.png" 
-             id="crackedCookie" class="cookie-img" alt="Cracked Cookie">
+        <!-- 调整DOM顺序确保层级 -->
         <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/FC.png" 
              id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
-        <!-- 新增纸条容器 -->
-        <div id="fortuneWrapper" style="position:absolute;width:55%;height:22%;top:58%;left:50%;transform:translate(-50%,-50%);display:none;">
-            <div id="fortune" class="fortune-text"></div>
-        </div>
+        <div id="fortune" class="fortune-text"></div>
+        <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/CFC.png" 
+             id="crackedCookie" class="cookie-img" alt="Cracked Cookie">
     </div>
     
     <div class="action-buttons" id="actionButtons">
@@ -123,44 +120,23 @@
             const wholeCookie = document.getElementById('wholeCookie');
             const crackedCookie = document.getElementById('crackedCookie');
             const fortune = document.getElementById('fortune');
-            const fortuneWrapper = document.getElementById('fortuneWrapper');
             const actionButtons = document.getElementById('actionButtons');
             const crackAgainBtn = document.getElementById('crackAgain');
             const shareFacebook = document.getElementById('shareFacebook');
             const crackSound = document.getElementById('crackSound');
             
-            // 99条短运势
             const fortunes = [
                 "Today is your lucky day",
                 "Good news is coming soon",
                 "Smile to attract joy",
+                "Adventure awaits you",
+                "Success is in your future",
                 "Trust your intuition",
                 "A surprise is coming",
                 "Love is around the corner",
                 "Your creativity shines",
-                "New opportunities arise",
-                "Dream big, achieve bigger",
-                "Kindness brings rewards",
-                "Good things take time",
-                "Your energy attracts luck",
-                "Challenges make you stronger",
-                "Happiness is a choice",
-                "Learn from every experience",
-                "Your potential is limitless",
-                "Patience leads to success",
-                "The best is yet to come",
-                "Embrace new beginnings",
-                "Your smile changes everything",
-                "Luck favors the bold",
-                "Great ideas are coming",
-                "Stay positive, stay winning",
-                "Your hard work pays off",
-                "Miracles happen daily",
-                "Believe in your magic",
-                "Good vibes only",
-                "Offer Yanqin your favorite fortuen cookie quota",
-                "The universe supports you",
-                "The best is yet to come"
+                "New opportunities arise"
+                // 补充更多...
             ];
             
             function crackCookie() {
@@ -172,7 +148,7 @@
                 setTimeout(() => {
                     wholeCookie.style.opacity = '0';
                     crackedCookie.style.opacity = '1';
-                    fortuneWrapper.style.display = 'block';
+                    fortune.style.display = 'block';
                     fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
                     actionButtons.style.display = 'flex';
                 }, 500);
@@ -181,7 +157,7 @@
             function resetCookie() {
                 wholeCookie.style.opacity = '1';
                 crackedCookie.style.opacity = '0';
-                fortuneWrapper.style.display = 'none';
+                fortune.style.display = 'none';
                 actionButtons.style.display = 'none';
             }
             
