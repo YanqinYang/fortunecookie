@@ -60,67 +60,68 @@
     <h1>Fortune Cookie</h1>
     
     <div class="cookie-container">
-        <img src="FC.png" id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
-        <img src="CFC.png" id="crackedCookie" class="cookie-img" alt="Cracked Cookie" style="opacity:0">
+        <!-- 修改1：确保图片路径正确 -->
+        <img src="./FC.png" id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
+        <img src="./CFC.png" id="crackedCookie" class="cookie-img" alt="Cracked Cookie" style="opacity:0">
     </div>
     
     <div id="fortune" class="fortune"></div>
-    
-    <!-- 临时移除音频测试 -->
-    <!-- <audio id="crackSound" src="ccrack.mp3" preload="auto"></audio> -->
 
     <script>
-        // 调试标记
-        console.log("初始化开始...");
-        
-        // 立即绑定事件（不使用DOMContentLoaded）
-        const wholeCookie = document.getElementById('wholeCookie');
-        const crackedCookie = document.getElementById('crackedCookie');
-        const fortune = document.getElementById('fortune');
-        // const sound = document.getElementById('crackSound');
-        
-        const fortunes = [
-            "DEBUG: 点击事件已触发",
-            "DEBUG: 脚本正在工作",
-            "DEBUG: 动画应该可见",
-            "DEBUG: 运势文本加载成功",
-            "DEBUG: 恭喜！功能正常"
-        ];
-        
-        function crackCookie() {
-            console.log("函数被调用");
+        // 修改2：更可靠的事件绑定方式
+        function init() {
+            console.log("初始化开始...");
             
-            if (wholeCookie.style.opacity === '0') {
-                console.warn("重复点击被阻止");
-                return;
+            const wholeCookie = document.getElementById('wholeCookie');
+            const crackedCookie = document.getElementById('crackedCookie');
+            const fortune = document.getElementById('fortune');
+            
+            const fortunes = [
+                "A dream you have will come true.",
+                "Good fortune will find you soon.",
+                "Adventure awaits around the corner.",
+                "Your creativity will lead to success.",
+                "Happiness begins with a smile."
+            ];
+            
+            function crackCookie() {
+                console.log("点击事件触发");
+                
+                if (wholeCookie.style.opacity === '0') {
+                    console.log("已裂开，忽略点击");
+                    return;
+                }
+                
+                // 添加晃动动画
+                wholeCookie.classList.add('shake');
+                
+                setTimeout(() => {
+                    // 切换图片
+                    wholeCookie.style.opacity = '0';
+                    crackedCookie.style.opacity = '1';
+                    
+                    // 显示随机运势
+                    fortune.style.display = 'block';
+                    fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
+                    
+                    // 移除动画
+                    wholeCookie.classList.remove('shake');
+                }, 500);
             }
             
-            // 调试时先注释音频
-            // sound.currentTime = 0;
-            // sound.play().catch(e => console.log("音频错误:", e));
+            // 修改3：更健壮的事件绑定
+            wholeCookie.addEventListener('click', crackCookie);
+            wholeCookie.onclick = crackCookie; // 双保险
             
-            wholeCookie.classList.add('shake');
-            console.log("添加shake类");
-            
-            setTimeout(() => {
-                wholeCookie.style.opacity = '0';
-                crackedCookie.style.opacity = '1';
-                fortune.style.display = 'block';
-                fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
-                wholeCookie.classList.remove('shake');
-                
-                console.log("动画完成", {
-                    wholeCookieOpacity: wholeCookie.style.opacity,
-                    crackedCookieOpacity: crackedCookie.style.opacity
-                });
-            }, 500);
+            console.log("初始化完成");
         }
-        
-        // 两种事件绑定方式确保至少一种生效
-        wholeCookie.onclick = crackCookie;
-        wholeCookie.addEventListener('click', crackCookie);
-        
-        console.log("初始化完成，等待点击...");
+
+        // 修改4：确保DOM完全加载后执行
+        if (document.readyState === 'complete') {
+            init();
+        } else {
+            document.addEventListener('DOMContentLoaded', init);
+        }
     </script>
 </body>
 </html>
