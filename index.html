@@ -31,10 +31,11 @@
             top: 0;
             left: 0;
             transition: opacity 0.5s;
-            pointer-events: auto; /* 新增关键修复 */
         }
         #crackedCookie {
             opacity: 0;
+            pointer-events: none; /* 关键修复：禁止拦截点击 */
+            z-index: -1; /* 确保在底层 */
         }
         .shake {
             animation: shake 0.5s;
@@ -61,32 +62,33 @@
     <h1>Fortune Cookie</h1>
     
     <div class="cookie-container">
+        <!-- 调整层级顺序 -->
+        <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/CFC.png" 
+             id="crackedCookie" class="cookie-img" alt="Cracked Cookie">
         <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/FC.png" 
              id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
-        <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/CFC.png" 
-             id="crackedCookie" class="cookie-img" alt="Cracked Cookie" style="opacity:0">
     </div>
     
     <div id="fortune" class="fortune"></div>
 
     <script>
-        // 修复方案：使用更可靠的事件委托
-        document.addEventListener('click', function(event) {
-            if (event.target.id === 'wholeCookie') {
-                const wholeCookie = event.target;
-                const crackedCookie = document.getElementById('crackedCookie');
-                const fortune = document.getElementById('fortune');
-                
-                const fortunes = [
-                    "A dream you have will come true.",
-                    "Good fortune will find you soon.",
-                    "Adventure awaits around the corner.",
-                    "Your creativity will lead to success.",
-                    "Happiness begins with a smile."
-                ];
-                
-                // 防止重复点击
-                if (wholeCookie.style.opacity === '0') return;
+        // 确保图片加载完成后绑定事件
+        window.addEventListener('load', function() {
+            const wholeCookie = document.getElementById('wholeCookie');
+            const crackedCookie = document.getElementById('crackedCookie');
+            const fortune = document.getElementById('fortune');
+            
+            const fortunes = [
+                "A dream you have will come true.",
+                "Good fortune will find you soon.",
+                "Adventure awaits around the corner.",
+                "Your creativity will lead to success.",
+                "Happiness begins with a smile."
+            ];
+            
+            function handleClick() {
+                // 禁用多次点击
+                wholeCookie.style.pointerEvents = 'none';
                 
                 // 动画效果
                 wholeCookie.classList.add('shake');
@@ -94,11 +96,16 @@
                 setTimeout(() => {
                     wholeCookie.style.opacity = '0';
                     crackedCookie.style.opacity = '1';
+                    crackedCookie.style.pointerEvents = 'auto'; // 允许交互
                     fortune.style.display = 'block';
                     fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
-                    wholeCookie.classList.remove('shake');
                 }, 500);
             }
+            
+            // 直接绑定onclick（最可靠方式）
+            wholeCookie.onclick = handleClick;
+            
+            console.log("初始化完成，点击功能已启用");
         });
     </script>
 </body>
