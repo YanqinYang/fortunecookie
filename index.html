@@ -60,17 +60,18 @@
     <h1>Fortune Cookie</h1>
     
     <div class="cookie-container">
-        <!-- 修改1：确保图片路径正确 -->
-        <img src="./FC.png" id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
-        <img src="./CFC.png" id="crackedCookie" class="cookie-img" alt="Cracked Cookie" style="opacity:0">
+        <!-- 使用GitHub Raw路径 -->
+        <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/FC.png" 
+             id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
+        <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/CFC.png" 
+             id="crackedCookie" class="cookie-img" alt="Cracked Cookie" style="opacity:0">
     </div>
     
     <div id="fortune" class="fortune"></div>
 
     <script>
-        // 修改2：更可靠的事件绑定方式
-        function init() {
-            console.log("初始化开始...");
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("脚本已加载");
             
             const wholeCookie = document.getElementById('wholeCookie');
             const crackedCookie = document.getElementById('crackedCookie');
@@ -87,41 +88,21 @@
             function crackCookie() {
                 console.log("点击事件触发");
                 
-                if (wholeCookie.style.opacity === '0') {
-                    console.log("已裂开，忽略点击");
-                    return;
-                }
-                
-                // 添加晃动动画
                 wholeCookie.classList.add('shake');
                 
                 setTimeout(() => {
-                    // 切换图片
                     wholeCookie.style.opacity = '0';
                     crackedCookie.style.opacity = '1';
-                    
-                    // 显示随机运势
                     fortune.style.display = 'block';
                     fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
-                    
-                    // 移除动画
                     wholeCookie.classList.remove('shake');
                 }, 500);
             }
             
-            // 修改3：更健壮的事件绑定
+            // 双重事件绑定
             wholeCookie.addEventListener('click', crackCookie);
-            wholeCookie.onclick = crackCookie; // 双保险
-            
-            console.log("初始化完成");
-        }
-
-        // 修改4：确保DOM完全加载后执行
-        if (document.readyState === 'complete') {
-            init();
-        } else {
-            document.addEventListener('DOMContentLoaded', init);
-        }
+            wholeCookie.onclick = crackCookie;
+        });
     </script>
 </body>
 </html>
