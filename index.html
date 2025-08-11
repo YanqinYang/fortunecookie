@@ -6,7 +6,7 @@
     <title>Fortune Cookie</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -15,12 +15,13 @@
             margin: 0;
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
+            text-align: center;
         }
         .cookie-container {
             position: relative;
             width: 300px;
             height: 200px;
-            margin: 20px 0;
+            margin: 20px auto;
         }
         .cookie-img {
             width: 100%;
@@ -30,15 +31,26 @@
             position: absolute;
             top: 0;
             left: 0;
-            transition: opacity 0.5s;
+            transition: all 0.5s ease;
         }
         #crackedCookie {
             opacity: 0;
-            pointer-events: none; /* 关键修复：禁止拦截点击 */
-            z-index: -1; /* 确保在底层 */
+            pointer-events: none;
+        }
+        .fortune-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            color: #2575fc; /* 蓝色字体 */
+            font-weight: bold;
+            font-size: 18px;
+            display: none;
+            z-index: 10;
         }
         .shake {
-            animation: shake 0.5s;
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -47,14 +59,41 @@
             60% { transform: translateX(-10px) rotate(-5deg); }
             80% { transform: translateX(10px) rotate(5deg); }
         }
-        .fortune {
-            background: white;
-            color: #333;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-width: 80%;
+        .action-buttons {
+            margin-top: 30px;
             display: none;
+        }
+        button {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            background: #FF5252;
+        }
+        .share-buttons {
+            margin-top: 20px;
+        }
+        .share-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .facebook {
+            background: #3B5998;
         }
     </style>
 </head>
@@ -62,21 +101,31 @@
     <h1>Fortune Cookie</h1>
     
     <div class="cookie-container">
-        <!-- 调整层级顺序 -->
         <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/CFC.png" 
              id="crackedCookie" class="cookie-img" alt="Cracked Cookie">
         <img src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/FC.png" 
              id="wholeCookie" class="cookie-img" alt="Fortune Cookie">
+        <div id="fortune" class="fortune-text"></div>
     </div>
     
-    <div id="fortune" class="fortune"></div>
+    <div class="action-buttons" id="actionButtons">
+        <button id="crackAgain">Crack Again</button>
+        <div class="share-buttons">
+            <a href="#" class="facebook" id="shareFacebook">Share to Facebook</a>
+        </div>
+    </div>
+
+    <audio id="crackSound" src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/ccrack.mp3" preload="auto"></audio>
 
     <script>
-        // 确保图片加载完成后绑定事件
-        window.addEventListener('load', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const wholeCookie = document.getElementById('wholeCookie');
             const crackedCookie = document.getElementById('crackedCookie');
             const fortune = document.getElementById('fortune');
+            const actionButtons = document.getElementById('actionButtons');
+            const crackAgainBtn = document.getElementById('crackAgain');
+            const shareFacebook = document.getElementById('shareFacebook');
+            const crackSound = document.getElementById('crackSound');
             
             const fortunes = [
                 "A dream you have will come true.",
@@ -86,9 +135,10 @@
                 "Happiness begins with a smile."
             ];
             
-            function handleClick() {
-                // 禁用多次点击
-                wholeCookie.style.pointerEvents = 'none';
+            function crackCookie() {
+                // 播放音效
+                crackSound.currentTime = 0;
+                crackSound.play().catch(e => console.log("Audio error:", e));
                 
                 // 动画效果
                 wholeCookie.classList.add('shake');
@@ -96,16 +146,28 @@
                 setTimeout(() => {
                     wholeCookie.style.opacity = '0';
                     crackedCookie.style.opacity = '1';
-                    crackedCookie.style.pointerEvents = 'auto'; // 允许交互
                     fortune.style.display = 'block';
                     fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
+                    actionButtons.style.display = 'block';
                 }, 500);
             }
             
-            // 直接绑定onclick（最可靠方式）
-            wholeCookie.onclick = handleClick;
+            function resetCookie() {
+                wholeCookie.style.opacity = '1';
+                crackedCookie.style.opacity = '0';
+                fortune.style.display = 'none';
+                actionButtons.style.display = 'none';
+            }
             
-            console.log("初始化完成，点击功能已启用");
+            function shareToFacebook() {
+                const text = encodeURIComponent("My fortune says: " + fortune.textContent + " - Try yours now!");
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=https://yanqinyang.github.io/fortunecookie/&quote=${text}`, '_blank');
+            }
+            
+            // 事件绑定
+            wholeCookie.onclick = crackCookie;
+            crackAgainBtn.onclick = resetCookie;
+            shareFacebook.onclick = shareToFacebook;
         });
     </script>
 </body>
