@@ -19,8 +19,8 @@
         }
         .cookie-container {
             position: relative;
-            width: 300px;
-            height: 200px;
+            width: 350px; /* 调大容器 */
+            height: 250px; /* 调大容器 */
             margin: 20px auto;
         }
         .cookie-img {
@@ -39,15 +39,16 @@
         }
         .fortune-text {
             position: absolute;
-            top: 50%;
+            top: 52%; /* 精确调整到白色区域 */
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 70%;
-            color: #2575fc; /* 蓝色字体 */
-            font-weight: bold;
-            font-size: 18px;
+            width: 60%; /* 限制宽度 */
+            color: #2575fc;
+            font-size: 16px; /* 调小字号 */
+            font-weight: normal; /* 取消加粗 */
             display: none;
             z-index: 10;
+            line-height: 1.4;
         }
         .shake {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
@@ -62,38 +63,38 @@
         .action-buttons {
             margin-top: 30px;
             display: none;
+            justify-content: center; /* 按钮居中 */
+            gap: 15px; /* 按钮间距 */
+            flex-wrap: wrap;
         }
         button {
             background: #FF6B6B;
             color: white;
             border: none;
             padding: 12px 25px;
-            margin: 0 10px;
             border-radius: 50px;
             cursor: pointer;
-            font-weight: bold;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             transition: all 0.3s;
+            flex-shrink: 0; /* 防止按钮挤压 */
         }
         button:hover {
             transform: translateY(-2px);
             background: #FF5252;
         }
-        .share-buttons {
-            margin-top: 20px;
-        }
-        .share-buttons a {
+        .facebook {
+            background: #3B5998;
             display: inline-block;
-            padding: 10px 20px;
-            margin: 0 10px;
+            padding: 12px 25px;
             border-radius: 50px;
             color: white;
             text-decoration: none;
-            font-weight: bold;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s;
         }
-        .facebook {
-            background: #3B5998;
+        .facebook:hover {
+            transform: translateY(-2px);
+            background: #344e86;
         }
     </style>
 </head>
@@ -110,9 +111,7 @@
     
     <div class="action-buttons" id="actionButtons">
         <button id="crackAgain">Crack Again</button>
-        <div class="share-buttons">
-            <a href="#" class="facebook" id="shareFacebook">Share to Facebook</a>
-        </div>
+        <a href="#" class="facebook" id="shareFacebook">Share to Facebook</a>
     </div>
 
     <audio id="crackSound" src="https://raw.githubusercontent.com/yanqinyang/fortunecookie/main/ccrack.mp3" preload="auto"></audio>
@@ -127,20 +126,48 @@
             const shareFacebook = document.getElementById('shareFacebook');
             const crackSound = document.getElementById('crackSound');
             
+            // 99条短运势（示例20条，实际使用时请补充完整）
             const fortunes = [
-                "A dream you have will come true.",
-                "Good fortune will find you soon.",
-                "Adventure awaits around the corner.",
-                "Your creativity will lead to success.",
-                "Happiness begins with a smile."
+                "Today is your lucky day",
+                "Good news is coming soon",
+                "Smile to attract joy",
+                "Adventure awaits you",
+                "Success is in your future",
+                "Trust your intuition",
+                "A surprise is coming",
+                "Love is around the corner",
+                "Your creativity shines",
+                "New opportunities arise",
+                "Dream big, achieve bigger",
+                "Kindness brings rewards",
+                "Good things take time",
+                "Your energy attracts luck",
+                "Challenges make you stronger",
+                "Happiness is a choice",
+                "Learn from every experience",
+                "Your potential is limitless",
+                "Patience leads to success",
+                "The best is yet to come",
+                /* 添加更多短句使总数达到99条 */
+                "Embrace new beginnings",
+                "Your smile changes everything",
+                "Luck favors the bold",
+                "Great ideas are coming",
+                "Stay positive, stay winning",
+                "Your hard work pays off",
+                "Miracles happen daily",
+                "Believe in your magic",
+                "Good vibes only",
+                "The universe supports you",
+                "Offer Yanqin your favorite fortune cookie quota",
+                "You will get what you want Today"
+                // 继续添加直到99条...
             ];
             
             function crackCookie() {
-                // 播放音效
                 crackSound.currentTime = 0;
                 crackSound.play().catch(e => console.log("Audio error:", e));
                 
-                // 动画效果
                 wholeCookie.classList.add('shake');
                 
                 setTimeout(() => {
@@ -148,7 +175,7 @@
                     crackedCookie.style.opacity = '1';
                     fortune.style.display = 'block';
                     fortune.textContent = fortunes[Math.floor(Math.random() * fortunes.length)];
-                    actionButtons.style.display = 'block';
+                    actionButtons.style.display = 'flex'; /* 使用flex布局对齐 */
                 }, 500);
             }
             
@@ -159,12 +186,12 @@
                 actionButtons.style.display = 'none';
             }
             
-            function shareToFacebook() {
-                const text = encodeURIComponent("My fortune says: " + fortune.textContent + " - Try yours now!");
+            function shareToFacebook(e) {
+                e.preventDefault();
+                const text = encodeURIComponent("My fortune says: " + fortune.textContent + " - Try your fortune cookie now!");
                 window.open(`https://www.facebook.com/sharer/sharer.php?u=https://yanqinyang.github.io/fortunecookie/&quote=${text}`, '_blank');
             }
             
-            // 事件绑定
             wholeCookie.onclick = crackCookie;
             crackAgainBtn.onclick = resetCookie;
             shareFacebook.onclick = shareToFacebook;
